@@ -9,6 +9,8 @@
     "install:app": "npm install --prefix app"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "@types/node": "^26.0.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0"
   }
 }
