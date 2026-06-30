@@ -140,7 +140,7 @@ export default function Capabilities() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-16 bg-white overflow-hidden">
+    <section id="capabilities" ref={sectionRef} className="relative py-16 bg-white overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
