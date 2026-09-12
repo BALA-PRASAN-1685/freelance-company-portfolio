@@ -1,6 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
+const projects = [
+  {
+    title: 'Sky Valley Resort',
+    category: 'Hospitality',
+    website: 'skyvalleyresort.in',
+    href: 'https://skyvalleyresort.in',
+    image: '/assets/skyvalley.jpg',
+    imageClassName: 'object-contain p-10 sm:p-16',
+    previewClassName: 'bg-[#102c25]',
+    description:
+      'A premium resort website designed to showcase luxury rooms, swimming pool, restaurant, gaming experiences, events and peaceful family getaways near Narasaraopet.',
+    tags: ['React', 'Responsive', 'SEO', 'Hospitality'],
+  },
+  {
+    title: 'Green Valley Food One',
+    category: 'Hospitality',
+    website: 'greenvalleyfoodone.com',
+    href: 'https://greenvalleyfoodone.com',
+    image: '/assets/greenvalleylogo.png',
+    imageClassName: 'object-contain p-8 sm:p-14',
+    previewClassName: 'bg-[#f0eadc]',
+    description:
+      'A modern cafe and restaurant website built to showcase the menu, dining experience, reservations, gallery, services, and hospitality features of Green Valley.',
+    tags: ['React', 'Responsive', 'SEO', 'Restaurant'],
+  },
+  {
+    title: 'NGS Infra Developers',
+    category: 'Real Estate',
+    website: 'ngsinfradevelopers.com',
+    href: 'https://ngsinfradevelopers.com',
+    image: '/assets/ngsinfradeveloperslogo.jpeg',
+    imageClassName: 'object-contain p-8 sm:p-14',
+    previewClassName: 'bg-[#171411]',
+    description:
+      'A professional real-estate website designed to showcase residential plot developments, project information, locations, amenities and investment opportunities with a modern, responsive user experience.',
+    tags: ['React', 'Responsive', 'SEO', 'Real Estate'],
+  },
+];
+
 export default function Portfolio() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -101,13 +140,16 @@ export default function Portfolio() {
     createParticles();
     draw();
 
-    window.addEventListener('resize', () => {
+    const handleResize = () => {
       resize();
       createParticles();
-    });
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -138,66 +180,74 @@ export default function Portfolio() {
           </h2>
         </div>
 
-        {/* Featured Project */}
-        <div
-          className={`bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          <div className="grid lg:grid-cols-5">
-            <div className="lg:col-span-3 relative">
-              <div className="relative h-64 lg:h-full min-h-[400px]">
-                <img
-                  src="/assets/skyvalley.jpg"
-                  alt="Sky Valley Resort"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur rounded-full text-sm font-medium text-gray-900">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    Live Project
-                  </span>
+        <div className="space-y-8">
+          {projects.map((project, index) => (
+            <article
+              key={project.title}
+              className={`overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-[0_18px_60px_rgba(72,48,102,0.08)] transition-all duration-700 ${
+                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+              }`}
+              style={{ transitionDelay: `${index * 120}ms` }}
+            >
+              <div className="border-b border-gray-100 px-6 py-5 sm:px-8">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                  Live Project
+                </span>
+              </div>
+
+              <div className="grid lg:grid-cols-5">
+                <div className="p-4 sm:p-6 lg:col-span-3 lg:p-8">
+                  <div className={`relative flex min-h-[300px] items-center justify-center overflow-hidden rounded-[1.35rem] sm:min-h-[420px] ${project.previewClassName}`}>
+                    <div className="absolute inset-x-8 top-5 flex items-center gap-1.5 opacity-60">
+                      <span className="h-2 w-2 rounded-full bg-white/70" />
+                      <span className="h-2 w-2 rounded-full bg-white/40" />
+                      <span className="h-2 w-2 rounded-full bg-white/20" />
+                      <span className="ml-2 h-4 flex-1 rounded-full bg-white/10" />
+                    </div>
+                    <img
+                      src={project.image}
+                      alt={`${project.title} website preview`}
+                      className={`mt-8 h-full max-h-[340px] w-full ${project.imageClassName}`}
+                    />
+                    <span className="absolute bottom-5 left-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+                      Website preview
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-center px-6 pb-8 sm:px-8 lg:col-span-2 lg:px-10 lg:py-10">
+                  <div className="mb-5 flex items-center gap-3">
+                    <span className="rounded-full bg-purple-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-purple-800">
+                      {project.category}
+                    </span>
+                    <span className="text-sm text-gray-400">2026</span>
+                  </div>
+                  <h3 className="mb-2 font-playfair text-3xl leading-tight text-gray-900 sm:text-4xl">
+                    {project.title}
+                  </h3>
+                  <p className="mb-5 text-sm font-medium text-purple-600">{project.website}</p>
+                  <p className="mb-7 max-w-xl leading-relaxed text-gray-600">{project.description}</p>
+                  <div className="mb-8 flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span key={tag} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 font-medium text-purple-600 transition-colors hover:text-purple-700"
+                  >
+                    View Live Project
+                    <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
                 </div>
               </div>
-            </div>
-
-            <div className="lg:col-span-2 p-8 lg:p-12 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold uppercase tracking-wider">
-                  Hospitality
-                </span>
-                <span className="text-sm text-gray-500">2026</span>
-              </div>
-
-              <h3 className="text-3xl font-playfair text-gray-900 mb-2">Sky Valley Resort</h3>
-              <p className="text-sm text-purple-600 mb-4">skyvalleyresort.in</p>
-
-              <p className="text-gray-600 leading-relaxed mb-6">
-                A premium resort website built end-to-end — featuring an elegant booking experience, gallery, services, and contact features. Designed to capture the luxury and tranquility of the resort.
-              </p>
-
-              <div className="flex flex-wrap gap-2 mb-8">
-                {['React', 'Responsive', 'SEO', 'Hospitality'].map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <a
-                href="https://skyvalleyresort.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors group"
-              >
-                View Live Project
-                <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </a>
-            </div>
-          </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
