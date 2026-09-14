@@ -27,7 +27,7 @@ const values = [
 export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -208,7 +208,7 @@ export default function About() {
 
             <div className="grid grid-cols-3 gap-6 mt-8 pt-8 border-t border-gray-200">
               <div>
-                <div className="text-2xl font-semibold text-purple-600">1+</div>
+                <div className="text-2xl font-semibold text-purple-600">3+</div>
                 <div className="text-xs uppercase tracking-wider text-gray-500 mt-1">
                   Projects Delivered
                 </div>

@@ -155,7 +155,7 @@ export default function Hero() {
             {/* Stats */}
             <div className="flex gap-8 pt-4">
               <div>
-                <div className="text-2xl font-semibold text-gray-900">1+</div>
+                <div className="text-2xl font-semibold text-gray-900">3+</div>
                 <div className="text-xs uppercase tracking-wider text-gray-500 mt-1">Projects</div>
               </div>
               <div>
