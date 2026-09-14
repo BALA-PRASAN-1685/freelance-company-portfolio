@@ -9,7 +9,7 @@ const projects = [
     href: 'https://skyvalleyresort.in',
     image: '/assets/skyvalley.jpg',
     imageClassName: 'object-contain p-10 sm:p-16',
-    previewClassName: 'bg-[#102c25]',
+    previewClassName: 'bg-[#9edcf2]',
     description:
       'A premium resort website designed to showcase luxury rooms, swimming pool, restaurant, gaming experiences, events and peaceful family getaways near Narasaraopet.',
     tags: ['React', 'Responsive', 'SEO', 'Hospitality'],
