@@ -162,7 +162,7 @@ export default function About() {
           >
             <div className="relative rounded-2xl overflow-hidden max-w-md">
               <img
-                src="public\assets\asset_5.png"
+                src="/assets/asset_5.png"
                 alt="Bala Prasan Patakamuri"
                 className="w-full aspect-[4/5] object-cover"
               />
