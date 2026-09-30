@@ -11,7 +11,7 @@ const projects = [
     imageClassName: 'object-contain p-10 sm:p-16',
     previewClassName: 'bg-[#9edcf2]',
     description:
-      'A premium resort website designed to showcase luxury rooms, swimming pool, restaurant, gaming experiences, events and peaceful family getaways near Narasaraopet.',
+      'A premium resort website designed to showcase luxury rooms, swimming pool, restaurant, gaming experiences, events, and peaceful family getaways near Narasaraopet. The platform also includes a **custom admin panel and management system** for handling room bookings, restaurant orders, customer details, services, events, inventory, and day-to-day resort operations.',
     tags: ['React', 'Responsive', 'SEO', 'RESORT'],
   },
   {
@@ -23,7 +23,7 @@ const projects = [
     imageClassName: 'object-contain p-8 sm:p-14',
     previewClassName: 'bg-[#f0eadc]',
     description:
-      'A modern cafe and restaurant website built to showcase the menu, dining experience, reservations, gallery, services, and hospitality features of Green Valley WE BUILD A BUILDING SYSTEM WITH ENTIRE POS SYSTEM AND CUSTOM MANAGEMENT.',
+      'A complete restaurant technology platform for Green Valley Food, combining a modern customer-facing website with an integrated POS system and custom management dashboard for orders, billing, menu, inventory, sales, reservations, and daily operations..',
       tags: ['React', 'Responsive', 'SEO', 'Restaurant'],
   },
   {
