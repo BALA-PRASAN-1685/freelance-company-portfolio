@@ -1,27 +1,22 @@
-import React from 'react'
 // removed framer-motion to avoid extra dependency
 import { motion } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const LOGO = '/assets/logo.jpg'
 
 const navLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Portfolio', href: '#portfolio' },
-  { label: 'Process', href: '#process' },
-  { label: 'Why Us', href: '#why-us' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', href: '/services' },
+  { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Process', href: '/process' },
+  { label: 'Why Us', href: '/why-us' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 
 
 export default function FooterSection() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
-  const navigate = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault()
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <footer className="relative bg-foreground text-background pt-32 pb-8 overflow-hidden">
       {/* Large background text */}
@@ -46,13 +41,12 @@ export default function FooterSection() {
           <p className="font-body text-lg text-background/50 mt-6 max-w-md mx-auto">
             Let's collaborate and build something extraordinary together.
           </p>
-          <a
-            href="#contact"
-            onClick={(e) => navigate(e, '#contact')}
+          <Link
+            to="/contact"
             className="inline-flex items-center gap-2 mt-8 bg-primary text-primary-foreground px-8 py-4 rounded-full font-body text-sm hover:opacity-90 transition-opacity"
           >
             Get In Touch
-          </a>
+          </Link>
         </motion.div>
 
         {/* Footer content */}
@@ -74,14 +68,13 @@ export default function FooterSection() {
             <h4 className="font-mono text-[10px] uppercase tracking-[0.3em] text-background/40 mb-4">Navigation</h4>
             <nav className="space-y-3">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
-                  onClick={(e) => navigate(e, link.href)}
+                  to={link.href}
                   className="block font-body text-sm text-background/60 hover:text-background transition-colors"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>

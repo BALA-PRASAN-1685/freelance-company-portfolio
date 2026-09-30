@@ -12,7 +12,7 @@ const projects = [
     previewClassName: 'bg-[#9edcf2]',
     description:
       'A premium resort website designed to showcase luxury rooms, swimming pool, restaurant, gaming experiences, events and peaceful family getaways near Narasaraopet.',
-    tags: ['React', 'Responsive', 'SEO', 'Hospitality'],
+    tags: ['React', 'Responsive', 'SEO', 'RESORT'],
   },
   {
     title: 'Green Valley Food One',
@@ -23,8 +23,8 @@ const projects = [
     imageClassName: 'object-contain p-8 sm:p-14',
     previewClassName: 'bg-[#f0eadc]',
     description:
-      'A modern cafe and restaurant website built to showcase the menu, dining experience, reservations, gallery, services, and hospitality features of Green Valley.',
-    tags: ['React', 'Responsive', 'SEO', 'Restaurant'],
+      'A modern cafe and restaurant website built to showcase the menu, dining experience, reservations, gallery, services, and hospitality features of Green Valley WE BUILD A BUILDING SYSTEM WITH ENTIRE POS SYSTEM AND CUSTOM MANAGEMENT.',
+      tags: ['React', 'Responsive', 'SEO', 'Restaurant'],
   },
   {
     title: 'NGS Infra Developers',

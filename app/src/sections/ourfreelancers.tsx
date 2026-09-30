@@ -1,4 +1,5 @@
 import { ArrowUpRight, BriefcaseBusiness } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function OurFreelancers() {
 	return (
@@ -57,13 +58,13 @@ export default function OurFreelancers() {
 							</p>
 						</div>
 
-						<a
-							href="#contact"
+						<Link
+							to="/contact"
 							className="mt-8 inline-flex w-fit items-center gap-2 font-semibold text-purple-700 transition-colors hover:text-purple-900"
 						>
 							Work with our team
 							<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
-						</a>
+						</Link>
 					</div>
 				</article>
 			</div>
