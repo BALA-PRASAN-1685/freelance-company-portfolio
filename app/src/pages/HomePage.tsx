@@ -5,6 +5,7 @@ import Capabilities from '../sections/Capabilities'
 import About from '../sections/About'
 import Process from '../sections/Process'
 import WhyUs from '../sections/WhyUs'
+import OurFreelancers from '../sections/ourfreelancers'
 import Contact from '../sections/Contact'
 
 export default function HomePage() {
@@ -17,6 +18,7 @@ export default function HomePage() {
       <About />
       <Process />
       <WhyUs />
+      <OurFreelancers />
       <Contact />
     </div>
   )

@@ -133,8 +133,8 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email',
-      value: 'btopnexus@gmail.com',
-      href: 'mailto:btopnexus@gmail.com',
+      value: 'info@btopnexus.com',
+      href: 'mailto:info@btopnexus.com',
     },
     {
       icon: MapPin,

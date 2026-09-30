@@ -90,7 +90,7 @@ export default function FooterSection() {
             <h4 className="font-mono text-[10px] uppercase tracking-[0.3em] text-background/40 mb-4">Connect</h4>
             <div className="space-y-3">
               <a href="tel:+918074961550" className="block font-body text-sm text-background/60 hover:text-background transition-colors">+91 80749 61550</a>
-              <a href="mailto:btopnexus@gmail.com" className="block font-body text-sm text-background/60 hover:text-background transition-colors">btopnexus@gmail.com</a>
+              <a href="mailto:info@btopnexus.com" className="block font-body text-sm text-background/60 hover:text-background transition-colors">info@btopnexus.com</a>
               <a href="https://wa.me/918074961550" target="_blank" rel="noopener noreferrer" className="block font-body text-sm text-background/60 hover:text-background transition-colors">WhatsApp</a>
             </div>
           </div>
