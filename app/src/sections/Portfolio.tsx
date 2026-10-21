@@ -1,252 +1,441 @@
-import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+'use client';
 
-const projects = [
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+
+/* ------------------------------------------------------------------ */
+/*  Brand palette                                                     */
+/*  Midnight Navy #071A3D · Metallic Gold #D4A52C · Pure White       */
+/* ------------------------------------------------------------------ */
+
+type Project = {
+  title: string;
+  category: string;
+  website: string;
+  href: string;
+  video: string;
+  logo: string;
+  logoBg: string;
+  description: string;
+  tags: string[];
+};
+
+const projects: Project[] = [
   {
     title: 'Sky Valley Resort',
     category: 'Hospitality',
     website: 'skyvalleyresort.in',
-    href: 'https://skyvalleyresort.in',
-    image: '/assets/skyvalley.jpg',
-    imageClassName: 'object-contain p-10 sm:p-16',
-    previewClassName: 'bg-[#9edcf2]',
+    href: 'https://www.skyvalleyresort.in',
+    video: '/assets/Video%20Project%201.mp4',
+    logo: '/assets/skyvalley.jpg',
+    logoBg: '#9edcf2',
     description:
-      'A premium resort website designed to showcase luxury rooms, swimming pool, restaurant, gaming experiences, events, and peaceful family getaways near Narasaraopet. The platform also includes a **custom admin panel and management system** for handling room bookings, restaurant orders, customer details, services, events, inventory, and day-to-day resort operations.',
-    tags: ['React', 'Responsive', 'SEO', 'RESORT'],
+      'Premium resort website with rooms, pool, restaurant and gaming — backed by a custom admin panel for bookings, orders and operations.',
+    tags: ['React', 'Responsive', 'SEO', 'Resort'],
   },
   {
     title: 'Green Valley Food One',
     category: 'Hospitality',
     website: 'greenvalleyfoodone.com',
-    href: 'https://greenvalleyfoodone.com',
-    image: '/assets/greenvalleylogo.png',
-    imageClassName: 'object-contain p-8 sm:p-14',
-    previewClassName: 'bg-[#f0eadc]',
+    href: 'https://www.greenvalleyfoodone.com',
+    video: '/assets/video%20project%202.mp4',
+    logo: '/assets/greenvalleylogo.png',
+    logoBg: '#f0eadc',
     description:
-      'A complete restaurant technology platform for Green Valley Food, combining a modern customer-facing website with an integrated POS system and custom management dashboard for orders, billing, menu, inventory, sales, reservations, and daily operations..',
-      tags: ['React', 'Responsive', 'SEO', 'Restaurant'],
+      'Restaurant platform with a modern website, integrated POS and dashboard for orders, billing, menu, inventory and daily operations.',
+    tags: ['React', 'Responsive', 'SEO', 'Restaurant'],
   },
   {
     title: 'NGS Infra Developers',
     category: 'Real Estate',
     website: 'ngsinfradevelopers.com',
-    href: 'https://ngsinfradevelopers.com',
-    image: '/assets/ngsinfradeveloperslogo.jpeg',
-    imageClassName: 'object-contain p-8 sm:p-14',
-    previewClassName: 'bg-[#171411]',
+    href: 'https://www.ngsinfradevelopers.com',
+    video: '/assets/video%20project%203.mp4',
+    logo: '/assets/ngsinfradeveloperslogo.jpeg',
+    logoBg: '#171411',
     description:
-      'A professional real-estate website designed to showcase residential plot developments, project information, locations, amenities and investment opportunities with a modern, responsive user experience.',
+      'Real-estate website showcasing plot developments, locations, amenities and investment opportunities with a responsive experience.',
     tags: ['React', 'Responsive', 'SEO', 'Real Estate'],
   },
 ];
 
-export default function Portfolio() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+const CARD_WIDTH = 380;
+const GAP = 24;
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
+export default function ProjectShowcase() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  /* Play the matching video when cursor enters a project card */
+  const handleMouseEnter = (index: number) => {
+    setHoveredIndex(index);
+
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    video.currentTime = 0;
+    video.play().catch(() => {
+      /* Autoplay may be blocked; safe to ignore because video is muted */
+    });
+  };
+
+  /* Pause and reset video when cursor leaves */
+  const handleMouseLeave = (index: number) => {
+    setHoveredIndex(null);
+
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    video.pause();
+    video.currentTime = 0;
+  };
+
+  /* Touch devices have no hover: tap the preview to play / stop */
+  const handlePreviewTap = (index: number) => {
+    if (!window.matchMedia('(hover: none)').matches) return;
+
+    if (hoveredIndex === index) {
+      handleMouseLeave(index);
+    } else {
+      if (hoveredIndex !== null) handleMouseLeave(hoveredIndex);
+      handleMouseEnter(index);
     }
+  };
 
-    return () => observer.disconnect();
-  }, []);
-
+  /* Pause all videos when the browser tab is hidden */
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      opacity: number;
-    }> = [];
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    const createParticles = () => {
-      particles = [];
-      const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.5 + 0.2,
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        videoRefs.current.forEach((video) => {
+          if (video) video.pause();
         });
       }
     };
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 150) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(109, 40, 217, ${0.1 * (1 - distance / 150)})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      particles.forEach((particle) => {
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(109, 40, 217, ${particle.opacity})`;
-        ctx.fill();
-
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-      });
-
-      animationFrameId = requestAnimationFrame(draw);
-    };
-
-    resize();
-    createParticles();
-    draw();
-
-    const handleResize = () => {
-      resize();
-      createParticles();
-    };
-
-    window.addEventListener('resize', handleResize);
-
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
+
+  const getStep = () => {
+    const firstCard = trackRef.current?.firstElementChild as HTMLElement | null;
+    return (firstCard?.offsetWidth ?? CARD_WIDTH) + GAP;
+  };
+
+  /* Update carousel arrow and dot state */
+  const updateScrollState = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    setCanScrollLeft(track.scrollLeft > 8);
+    setCanScrollRight(
+      track.scrollLeft + track.clientWidth < track.scrollWidth - 8
+    );
+
+    const firstCard = track.firstElementChild as HTMLElement | null;
+    const step = (firstCard?.offsetWidth ?? CARD_WIDTH) + GAP;
+    const index = Math.round(track.scrollLeft / step);
+    setActiveIndex(Math.max(0, Math.min(index, projects.length - 1)));
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    updateScrollState();
+    track.addEventListener('scroll', updateScrollState, { passive: true });
+
+    const resizeObserver = new ResizeObserver(updateScrollState);
+    resizeObserver.observe(track);
+
+    return () => {
+      track.removeEventListener('scroll', updateScrollState);
+      resizeObserver.disconnect();
+    };
+  }, [updateScrollState]);
+
+  const scrollByCard = (direction: 1 | -1) => {
+    trackRef.current?.scrollBy({
+      left: direction * getStep(),
+      behavior: 'smooth',
+    });
+  };
+
+  const goTo = (index: number) => {
+    trackRef.current?.scrollTo({
+      left: index * getStep(),
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <section
       id="portfolio"
-      ref={sectionRef}
-      className="relative py-20 bg-gray-50/50 overflow-hidden"
+      className="relative overflow-hidden py-14 sm:py-20"
+      style={{ backgroundColor: '#071A3D' }}
     >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-0"
+      {/* Soft gold glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(900px 480px at 12% -10%, rgba(212,165,44,0.16), transparent 60%), radial-gradient(700px 420px at 95% 110%, rgba(212,165,44,0.10), transparent 60%)',
+        }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-px bg-purple-600" />
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-600">
-              Selected Work
-            </span>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-5 sm:mb-10">
+          <div>
+            <div className="mb-3 flex items-center gap-3">
+              <div className="h-px w-8" style={{ backgroundColor: '#D4A52C' }} />
+              <span
+                className="text-xs font-semibold uppercase tracking-[0.2em]"
+                style={{ color: '#D4A52C' }}
+              >
+                Selected Work
+              </span>
+            </div>
+
+            <h2 className="text-3xl leading-tight sm:text-5xl">
+              <span className="font-semibold" style={{ color: '#FFFFFF' }}>
+                Featured
+              </span>{' '}
+              <span className="italic" style={{ color: '#D4A52C' }}>
+                Projects
+              </span>
+            </h2>
+
+            <p
+              className="mt-3 max-w-xl text-sm"
+              style={{ color: '#F5F3EE', opacity: 0.75 }}
+            >
+              Hover (or tap) a project to preview it in motion. Scroll sideways
+              to explore more.
+            </p>
           </div>
-          <h2 className="font-playfair text-4xl sm:text-5xl">
-            <span className="text-gray-900">The Portfolio</span>
-            <br />
-            <span className="text-purple-600 italic">Archive</span>
-          </h2>
+
+          {/* Carousel arrows */}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => scrollByCard(-1)}
+              disabled={!canScrollLeft}
+              aria-label="Previous project"
+              className="flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-30 sm:h-11 sm:w-11"
+              style={{
+                borderColor: 'rgba(212,165,44,0.45)',
+                color: '#D4A52C',
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={(event) => {
+                if (!canScrollLeft) return;
+                event.currentTarget.style.backgroundColor = '#D4A52C';
+                event.currentTarget.style.color = '#071A3D';
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.backgroundColor = 'transparent';
+                event.currentTarget.style.color = '#D4A52C';
+              }}
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollByCard(1)}
+              disabled={!canScrollRight}
+              aria-label="Next project"
+              className="flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-30 sm:h-11 sm:w-11"
+              style={{
+                borderColor: 'rgba(212,165,44,0.45)',
+                color: '#D4A52C',
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={(event) => {
+                if (!canScrollRight) return;
+                event.currentTarget.style.backgroundColor = '#D4A52C';
+                event.currentTarget.style.color = '#071A3D';
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.backgroundColor = 'transparent';
+                event.currentTarget.style.color = '#D4A52C';
+              }}
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-8">
-          {projects.map((project, index) => (
-            <article
-              key={project.title}
-              className={`overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-[0_18px_60px_rgba(72,48,102,0.08)] transition-all duration-700 ${
-                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-              }`}
-              style={{ transitionDelay: `${index * 120}ms` }}
-            >
-              <div className="border-b border-gray-100 px-6 py-5 sm:px-8">
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-                  Live Project
-                </span>
-              </div>
+        {/* Project cards */}
+        <div
+          ref={trackRef}
+          className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 pt-2 [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {projects.map((project, index) => {
+            const isHovered = hoveredIndex === index;
 
-              <div className="grid lg:grid-cols-5">
-                <div className="p-4 sm:p-6 lg:col-span-3 lg:p-8">
-                  <div className={`relative flex min-h-[300px] items-center justify-center overflow-hidden rounded-[1.35rem] sm:min-h-[420px] ${project.previewClassName}`}>
-                    <div className="absolute inset-x-8 top-5 flex items-center gap-1.5 opacity-60">
-                      <span className="h-2 w-2 rounded-full bg-white/70" />
-                      <span className="h-2 w-2 rounded-full bg-white/40" />
-                      <span className="h-2 w-2 rounded-full bg-white/20" />
-                      <span className="ml-2 h-4 flex-1 rounded-full bg-white/10" />
-                    </div>
+            return (
+              <article
+                key={project.title}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={() => handleMouseLeave(index)}
+                className="group flex w-[82vw] max-w-[380px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border shadow-[0_20px_50px_rgba(0,0,0,0.35)] transition-transform duration-500 hover:-translate-y-2 sm:w-[380px]"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  borderColor: 'rgba(212,165,44,0.25)',
+                }}
+              >
+                {/* Preview / video area (larger) */}
+                <div
+                  onClick={() => handlePreviewTap(index)}
+                  className="relative aspect-[4/4.2] w-full cursor-pointer overflow-hidden sm:aspect-[4/4.4]"
+                  style={{ backgroundColor: project.logoBg }}
+                >
+                  {/* Logo preview */}
+                  <div
+                    className="absolute inset-0 z-10 flex items-center justify-center p-8 transition-opacity duration-700 sm:p-10"
+                    style={{ opacity: isHovered ? 0 : 1 }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={project.image}
-                      alt={`${project.title} website preview`}
-                      className={`mt-8 h-full max-h-[340px] w-full ${project.imageClassName}`}
+                      src={project.logo}
+                      alt={`${project.title} logo`}
+                      className="max-h-full max-w-full object-contain drop-shadow-[0_18px_36px_rgba(0,0,0,0.25)] transition-transform duration-700 group-hover:scale-105"
                     />
-                    <span className="absolute bottom-5 left-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
-                      Website preview
-                    </span>
                   </div>
+
+                  {/* Hover video preview */}
+                  <video
+                    ref={(element) => {
+                      videoRefs.current[index] = element;
+                    }}
+                    src={project.video}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className="absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700"
+                    style={{ opacity: isHovered ? 1 : 0 }}
+                  />
+
+                  {/* Live badge */}
+                  <span
+                    className="absolute bottom-3 left-3 z-20 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]"
+                    style={{
+                      backgroundColor: 'rgba(7,26,61,0.8)',
+                      color: '#D4A52C',
+                    }}
+                  >
+                    <span
+                      className="h-1.5 w-1.5 animate-pulse rounded-full"
+                      style={{ backgroundColor: '#D4A52C' }}
+                    />
+                    Live Project
+                  </span>
+
+                  {/* Gold hover frame */}
+                  <div
+                    className="pointer-events-none absolute inset-0 z-20 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    style={{ boxShadow: 'inset 0 0 0 3px #D4A52C' }}
+                  />
                 </div>
 
-                <div className="flex flex-col justify-center px-6 pb-8 sm:px-8 lg:col-span-2 lg:px-10 lg:py-10">
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="rounded-full bg-purple-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-purple-800">
+                {/* Card details (compact) */}
+                <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <div className="mb-2 flex items-center gap-3">
+                    <span
+                      className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                      style={{
+                        backgroundColor: 'rgba(212,165,44,0.15)',
+                        color: '#8a6a14',
+                      }}
+                    >
                       {project.category}
                     </span>
-                    <span className="text-sm text-gray-400">2026</span>
+                    <span
+                      className="text-xs"
+                      style={{ color: '#101828', opacity: 0.4 }}
+                    >
+                      2026
+                    </span>
                   </div>
-                  <h3 className="mb-2 font-playfair text-3xl leading-tight text-gray-900 sm:text-4xl">
+
+                  <h3
+                    className="text-lg leading-tight sm:text-xl"
+                    style={{ color: '#101828', fontWeight: 700 }}
+                  >
                     {project.title}
                   </h3>
-                  <p className="mb-5 text-sm font-medium text-purple-600">{project.website}</p>
-                  <p className="mb-7 max-w-xl leading-relaxed text-gray-600">{project.description}</p>
-                  <div className="mb-8 flex flex-wrap gap-2">
+
+                  <p
+                    className="mb-2 text-xs font-medium"
+                    style={{ color: '#B8891A' }}
+                  >
+                    {project.website}
+                  </p>
+
+                  <p
+                    className="mb-3 line-clamp-3 text-[12.5px] leading-relaxed"
+                    style={{ color: '#101828', opacity: 0.7 }}
+                  >
+                    {project.description}
+                  </p>
+
+                  <div className="mb-4 flex flex-wrap gap-1.5">
                     {project.tags.map((tag) => (
-                      <span key={tag} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700">
+                      <span
+                        key={tag}
+                        className="rounded-full border px-2.5 py-0.5 text-[10px] font-medium"
+                        style={{
+                          borderColor: 'rgba(7,26,61,0.15)',
+                          color: '#071A3D',
+                        }}
+                      >
                         {tag}
                       </span>
                     ))}
                   </div>
+
                   <a
                     href={project.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 font-medium text-purple-600 transition-colors hover:text-purple-700"
+                    className="mt-auto inline-flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold transition-all duration-300 hover:gap-3"
+                    style={{ backgroundColor: '#071A3D', color: '#D4A52C' }}
                   >
-                    View Live Project
-                    <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    Visit Website
+                    <ArrowUpRight size={15} />
                   </a>
                 </div>
-              </div>
-            </article>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* Dots */}
+        <div className="mt-6 flex items-center justify-center gap-2">
+          {projects.map((project, index) => (
+            <button
+              key={project.title}
+              type="button"
+              onClick={() => goTo(index)}
+              aria-label={`Go to ${project.title}`}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{
+                width: activeIndex === index ? 28 : 8,
+                backgroundColor:
+                  activeIndex === index ? '#D4A52C' : 'rgba(255,255,255,0.3)',
+              }}
+            />
           ))}
         </div>
       </div>

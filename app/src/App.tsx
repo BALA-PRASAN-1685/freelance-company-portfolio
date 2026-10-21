@@ -10,6 +10,7 @@ import ProcessPage from './pages/ProcessPage'
 import ServicesPage from './pages/ServicesPage'
 import WhyUsPage from './pages/WhyUsPage'
 import OurFreelancers from './sections/ourfreelancers'
+import ContactPopup from './components/ContactPopup'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -25,17 +26,18 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <ContactPopup />
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route element={<Layout><Outlet /></Layout>}>
           <Route path="/home" element={<HomePage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/capabilities" element={<CapabilitiesPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/capabilities" element={<CapabilitiesPage />} />
           <Route path="/process" element={<ProcessPage />} />
-          <Route path="/why-us" element={<WhyUsPage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/freelancers" element={<OurFreelancers />} />
+          <Route path="/why-us" element={<WhyUsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Route>
